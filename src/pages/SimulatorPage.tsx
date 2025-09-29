@@ -72,6 +72,7 @@ export default function SimulatorPage() {
   }, [inputData]);
 
   /* --------------------------------- tsx --------------------------------- */
+  console.log(finalPortfolioDist);
 
   return (
     <div>
