@@ -10,29 +10,18 @@ export default function InputForm({ setInputData }: inputProps) {
   /* ------------------------------- States ------------------------------- */
 
   const [principal, setPrincipal] = useState<string>("");
-  const [monthlyContribution, setMonthlyContribution] = useState<string>("");
+  const [monthlyAddition, setMonthlyAddition] = useState<string>("");
+  const [additionType, setAdditionType] = useState<string>("contribution");
   const [durationYears, setDurationYears] = useState<string>("");
 
   /* ----------------------- Event Handler Functions ----------------------- */
 
-  const cleanCurrencyInput = (value: string, allowMinus: boolean): string => {
+  // Removes all character except digits, dot, comma. Enforce 2 decimal places.
+  const cleanCurrencyInput = (value: string): string => {
     if (!value) return "";
 
-    // Remove everything except digits, dot, minus, and comma
-    let cleaned: string = value.replace(/[^\d.,-]/g, "");
-
-    // Only allow a single minus at the start, if specified
-    if (allowMinus) {
-      const isNegative = cleaned.startsWith("-");
-      cleaned = cleaned.replace(/-/g, ""); // remove all minus signs
-      if (isNegative) {
-        cleaned = "-" + cleaned;
-      }
-    }
-    // strip minus if not allowNegative
-    else {
-      cleaned = cleaned.replace("-", "");
-    }
+    // Remove everything except digits, dot, and comma
+    let cleaned: string = value.replace(/[^\d.,]/g, "");
 
     // Only keep the first dot
     const parts = cleaned.split(".");
@@ -48,6 +37,7 @@ export default function InputForm({ setInputData }: inputProps) {
     return cleaned;
   };
 
+  // Place the currency commas in the correct location.
   const placeCurrencyComma = (value: string): string => {
     if (!value) return "";
 
@@ -62,12 +52,15 @@ export default function InputForm({ setInputData }: inputProps) {
     return numeral(num).format("0,0.00");
   };
 
+  // Enforce only digits
   const onlyAllowInt = (value: string): string => {
     if (!value) return "";
 
     return value.replace(/[^0-9]/g, "");
   };
 
+  // Check that duration is no more than 100 years.
+  // Returns true if duration is less than 100 years, otherwise return false.
   const checkDurationLength = (durationYears: string): boolean => {
     if (!durationYears) {
       alert("Duration cannot be empty!!!");
@@ -90,19 +83,21 @@ export default function InputForm({ setInputData }: inputProps) {
     return true;
   };
 
+  // Set the inputValue state from parent, essentially return by reference.
   const setInputDataValue = () => {
     // Guard Clause: make sure duration is not more than 100 years
     if (!checkDurationLength(durationYears)) return;
 
     // Put 0s in the input if blank
     if (!principal) setPrincipal("0.00");
-    if (!monthlyContribution) setMonthlyContribution("0.00");
+    if (!monthlyAddition) setMonthlyAddition("0.00");
 
     // create and set new inputData type, put 0s if blank
     const newInputData: inputDataType = {
       principal: parseFloat(principal.replace(/,/g, "")) || 0,
       monthlyContribution:
-        parseFloat(monthlyContribution.replace(/,/g, "")) || 0,
+        (parseFloat(monthlyAddition.replace(/,/g, "")) || 0) *
+        (additionType === "contribution" ? 1 : -1),
       durationMonths: (parseFloat(durationYears) || 0) * 12,
     };
     setInputData(newInputData);
@@ -112,9 +107,9 @@ export default function InputForm({ setInputData }: inputProps) {
 
   return (
     <div
-      className="bg-gray-700/10 backdrop-blur-xl 
-      border border-white/20 p-6 rounded-xl max-w-lg 
-      mx-auto space-y-6 text-gray-100 
+      className="
+      bg-gray-700/10 backdrop-blur-xl border border-white/20 p-6 rounded-xl 
+      space-y-6 text-gray-100 w-full max-w-sm
       transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(0,255,255,0.9)]"
     >
       {/* Input Header */}
@@ -131,12 +126,10 @@ export default function InputForm({ setInputData }: inputProps) {
           id="principalText"
           type="text"
           inputMode="decimal"
-          className="border border-gray-700 rounded-md px-3 py-2 bg-gray-800 text-gray-200 
+          className="border border-gray-700 rounded-md px-3 py-2 bg-gray-700/20 text-gray-200 
           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           value={principal}
-          onChange={(e) =>
-            setPrincipal(cleanCurrencyInput(e.target.value, false))
-          }
+          onChange={(e) => setPrincipal(cleanCurrencyInput(e.target.value))}
           onBlur={(e) => setPrincipal(placeCurrencyComma(e.target.value))}
         />
       </div>
@@ -150,16 +143,43 @@ export default function InputForm({ setInputData }: inputProps) {
           id="contribution"
           type="text"
           inputMode="decimal"
-          className="border border-gray-700 rounded-md px-3 py-2 bg-gray-800 text-gray-200 
+          className="border border-gray-700 rounded-md px-3 py-2 mb-3 bg-gray-700/20 text-gray-200 
           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-          value={monthlyContribution}
+          value={monthlyAddition}
           onChange={(e) =>
-            setMonthlyContribution(cleanCurrencyInput(e.target.value, true))
+            setMonthlyAddition(cleanCurrencyInput(e.target.value))
           }
-          onBlur={(e) =>
-            setMonthlyContribution(placeCurrencyComma(e.target.value))
-          }
+          onBlur={(e) => setMonthlyAddition(placeCurrencyComma(e.target.value))}
         />
+        {/* Radio buttons */}
+        <div className="flex space-x-6 mx-auto">
+          <label className="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="additionType"
+              value="contribution"
+              checked={additionType === "contribution"}
+              onChange={() => setAdditionType("contribution")}
+              className="w-5 h-5 rounded-full border-2 border-cyan-400
+                        appearance-none checked:bg-cyan-400
+                        focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            />
+            <span>Contribution</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="additionType"
+              value="withdrawal"
+              checked={additionType === "withdrawal"}
+              onChange={() => setAdditionType("withdrawal")}
+              className="w-5 h-5 rounded-full border-2 border-cyan-400
+                        appearance-none checked:bg-cyan-400
+                        focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            />
+            <span>Withdrawal</span>
+          </label>
+        </div>
       </div>
 
       {/* Duration Years */}
@@ -170,8 +190,8 @@ export default function InputForm({ setInputData }: inputProps) {
         <input
           id="duration"
           type="text"
-          inputMode="decimal"
-          className="border border-gray-700 rounded-md px-3 py-2 bg-gray-800 text-gray-200 
+          inputMode="numeric"
+          className="border border-gray-700 rounded-md px-3 py-2 bg-gray-700/20 text-gray-200 
           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           value={durationYears}
           onChange={(e) => setDurationYears(onlyAllowInt(e.target.value))}
@@ -182,8 +202,9 @@ export default function InputForm({ setInputData }: inputProps) {
       <div className="flex justify-center">
         <button
           onClick={setInputDataValue}
-          className="bg-cyan-600 text-white font-semibold px-4 py-2 rounded-md 
-          hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+          className="bg-cyan-500 text-white font-semibold px-4 py-2 rounded-md 
+          hover:bg-cyan-400 active:bg-cyan-500 
+          focus:outline-none focus:ring-2 focus:ring-cyan-400"
         >
           Simulate
         </button>

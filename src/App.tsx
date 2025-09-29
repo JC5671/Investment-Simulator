@@ -9,7 +9,7 @@ function App() {
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div
-          className="min-h-screen bg-cover bg-center text-gray-100"
+          className="min-h-screen bg-cover bg-center bg-fixed text-gray-100"
           style={{ backgroundImage: "url('/background.jpeg')" }}
         >
           <NavBar />

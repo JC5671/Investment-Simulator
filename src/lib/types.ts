@@ -13,3 +13,8 @@ export interface simulationData {
   month: number;
   portfolioValue: number;
 }
+
+export interface chartData {
+  year: string;
+  portfolioValue: number;
+}

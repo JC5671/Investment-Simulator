@@ -6,6 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Reads snp500 data from SNP500.csv and return the result.
 export async function readSnpData(): Promise<stockPricePoint[]> {
   try {
     const response = await fetch("/src/assets/data/SNP500.csv");
@@ -23,6 +24,8 @@ export async function readSnpData(): Promise<stockPricePoint[]> {
   }
 }
 
+// Perform 10,000 simulations from randomly sampled monthly returns, based
+// on parameters, then return the result.
 export async function simulate(
   snpData: stockPricePoint[],
   principal: number,
@@ -75,16 +78,18 @@ export async function simulate(
   return allSimulationData;
 }
 
+// Extract the final portfolio value from 10,000 simulations, then return it.
+// Note: for histogram purposes.
 export async function getFinalPortfolioDist(
   allSimulationData: simulationData[][]
 ): Promise<number[]> {
-  const finalPortfolioData: number[] = allSimulationData.map(
+  return allSimulationData.map(
     (x: simulationData[]) => x[x.length - 1].portfolioValue
   );
-
-  return finalPortfolioData;
 }
 
+// Simplify the 10,000 simulation by averaging portfolio for each month.
+// Note: for charting purposes.
 export async function getSimulationAverage(
   allSimulationData: simulationData[][]
 ): Promise<simulationData[]> {
@@ -110,6 +115,8 @@ export async function getSimulationAverage(
   return averagedSimulationData;
 }
 
+// Simplify the 10,000 simulation by taking the median portfolio for each month.
+// Note: for charting purposes.
 export async function getSimulationMedian(
   allSimulationData: simulationData[][]
 ): Promise<simulationData[]> {
