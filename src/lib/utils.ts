@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 // Reads snp500 data from SNP500.csv and return the result.
 export async function readSnpData(): Promise<stockPricePoint[]> {
   try {
-    const response = await fetch("/src/assets/data/SNP500.csv");
+    const response = await fetch("/assets/SNP500.csv");
     const rawData: string = await response.text();
 
     const data: stockPricePoint[] = rawData.split("\r\n").map((x) => {
