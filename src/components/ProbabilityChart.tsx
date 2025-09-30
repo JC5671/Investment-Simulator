@@ -209,7 +209,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
         </ChartContainer>
 
         {/* Inference Section */}
-        <div className="flex flex-col md:flex-row justify-center items-center gap-x-0 gap-y-1 mb-2">
+        <div className="flex flex-col md:flex-row justify-center items-center gap-x-0 gap-y-1 mb-2 mt-5">
           {/* Probability Expression */}
           <div className="flex justify-center items-center">
             <span className="text-md">{"P(Portfolio"}</span>

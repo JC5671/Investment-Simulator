@@ -95,9 +95,7 @@ export default function SimulatorPage() {
 
           {/* Probability Chart */}
           <div className="flex justify-center mb-10">
-            <ProbabilityChart
-              sortedDist={sortedFinalPortfolioDist}
-            />
+            <ProbabilityChart sortedDist={sortedFinalPortfolioDist} />
           </div>
         </>
       )}

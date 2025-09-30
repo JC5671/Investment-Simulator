@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { ThemeProvider } from "./components/theme-provider.tsx";
 import SimulatorPage from "./pages/SimulatorPage.tsx";
-import AboutPage from "./pages/AboutPage";
+import AboutPage from "./pages/AboutPage.tsx";
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div
           className="min-h-screen bg-cover bg-center bg-fixed text-gray-100"
-          style={{ backgroundImage: "url('/assets/background1.jpg')" }}
+          style={{ backgroundImage: "url('/assets/background.jpg')" }}
         >
           <NavBar />
           <div className="p-6 relative z-10">
