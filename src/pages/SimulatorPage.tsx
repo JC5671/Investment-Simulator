@@ -1,15 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import InputForm from "@/components/InputForm";
 import SimulationChart from "@/components/SimulationChart";
+import ProbabilityChart from "@/components/ProbabilityChart";
 import type {
-  inputDataType,
-  stockPricePoint,
-  simulationData,
+  InputDataType,
+  StockPricePoint,
+  SimulationData,
 } from "@/lib/types";
 import {
   readSnpData,
   simulate,
-  getFinalPortfolioDist,
+  getFinalPortfolioDistSorted,
   getSimulationAverage,
   getSimulationMedian,
 } from "@/lib/utils";
@@ -17,17 +18,19 @@ import {
 export default function SimulatorPage() {
   /* ------------------------------- States ------------------------------- */
   // raw snp data
-  const [snpData, setSnpData] = useState<stockPricePoint[]>([]);
+  const [snpData, setSnpData] = useState<StockPricePoint[]>([]);
   // calculated simulation data
-  const [finalPortfolioDist, setFinalPortfolioDist] = useState<number[]>([]);
+  const [sortedFinalPortfolioDist, setSortedFinalPortfolioDist] = useState<
+    number[]
+  >([]);
   const [averagedSimulationData, setAveragedSimulationData] = useState<
-    simulationData[]
+    SimulationData[]
   >([]);
   const [medianSimulationData, setMedianSimulationData] = useState<
-    simulationData[]
+    SimulationData[]
   >([]);
   // input data
-  const [inputData, setInputData] = useState<inputDataType>({
+  const [inputData, setInputData] = useState<InputDataType>({
     principal: 0.0,
     monthlyContribution: 0.0,
     durationMonths: 0.0,
@@ -52,9 +55,9 @@ export default function SimulatorPage() {
       inputData.monthlyContribution,
       inputData.durationMonths
     )
-      .then((allSimulationData: simulationData[][]) => {
-        getFinalPortfolioDist(allSimulationData).then((data) =>
-          setFinalPortfolioDist(data)
+      .then((allSimulationData: SimulationData[][]) => {
+        getFinalPortfolioDistSorted(allSimulationData).then((data) =>
+          setSortedFinalPortfolioDist(data)
         );
         getSimulationAverage(allSimulationData).then((data) =>
           setAveragedSimulationData(data)
@@ -72,7 +75,6 @@ export default function SimulatorPage() {
   }, [inputData]);
 
   /* --------------------------------- tsx --------------------------------- */
-  console.log(finalPortfolioDist);
 
   return (
     <div>
@@ -81,14 +83,23 @@ export default function SimulatorPage() {
         <InputForm setInputData={setInputData} />
       </div>
 
-      {/* Simulation Chart */}
       {inputData.durationMonths !== 0 && (
-        <div ref={chartRef} className="flex justify-center mb-10">
-          <SimulationChart
-            medianSimulationData={medianSimulationData}
-            averagedSimulationData={averagedSimulationData}
-          />
-        </div>
+        <>
+          {/* Simulation Chart */}
+          <div ref={chartRef} className="flex justify-center mb-10">
+            <SimulationChart
+              medianSimulationData={medianSimulationData}
+              averagedSimulationData={averagedSimulationData}
+            />
+          </div>
+
+          {/* Probability Chart */}
+          <div className="flex justify-center mb-10">
+            <ProbabilityChart
+              sortedDist={sortedFinalPortfolioDist}
+            />
+          </div>
+        </>
       )}
     </div>
   );

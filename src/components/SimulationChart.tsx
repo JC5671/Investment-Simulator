@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 import numeral from "numeral";
-import type { simulationData, chartData } from "@/lib/types";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import type { SimulationData, SimChartData } from "@/lib/types";
 import type { ChartConfig } from "@/components/ui/chart";
 
 interface ChartProps {
-  averagedSimulationData: simulationData[];
-  medianSimulationData: simulationData[];
+  averagedSimulationData: SimulationData[];
+  medianSimulationData: SimulationData[];
 }
 
 export default function SimulationChart({
@@ -25,7 +21,7 @@ export default function SimulationChart({
   const [resultMode, setResultMode] = useState<string>("average");
   const [yearLabel, setYearLabel] = useState<string>("");
   const [portfolioLabel, setPortfolioLabel] = useState<string>("");
-  const [chartData, setChartData] = useState<chartData[]>([]);
+  const [chartData, setChartData] = useState<SimChartData[]>([]);
   const [xAxisTicks, setXAxisTicks] = useState<string[]>([]);
 
   // constants
@@ -46,11 +42,11 @@ export default function SimulationChart({
 
     // Process simulation data to local chart data by using year as X axis
     // Note: Use local chart data for processing because setChartData has delay
-    const localSimData: simulationData[] =
+    const localSimData: SimulationData[] =
       resultMode === "average" ? averagedSimulationData : medianSimulationData;
-    const localChartData: chartData[] = localSimData
-      .filter((x: simulationData) => Number.isInteger(x.month / 12))
-      .map((x: simulationData) => ({
+    const localChartData: SimChartData[] = localSimData
+      .filter((x: SimulationData) => Number.isInteger(x.month / 12))
+      .map((x: SimulationData) => ({
         year: (x.month / 12).toFixed(0),
         portfolioValue: x.portfolioValue,
       }));
@@ -75,7 +71,7 @@ export default function SimulationChart({
     const recurrence: number = 5;
     let tickYear: string[] = localChartData
       .filter((_, i) => i % recurrence == 0)
-      .map((x: chartData) => x.year);
+      .map((x: SimChartData) => x.year);
     // force beginning and end
     tickYear.unshift(localChartData[0].year);
     tickYear.push(localChartData[localChartData.length - 1].year);
@@ -103,13 +99,13 @@ export default function SimulationChart({
     if (resultMode === "average" && averagedSimulationData.length === 0) return;
     if (resultMode === "median" && medianSimulationData.length === 0) return;
 
-    const datapoint: chartData = chartData[index];
+    const datapoint: SimChartData = chartData[index];
     setYearLabel(datapoint.year);
     setPortfolioLabel(numeral(datapoint.portfolioValue).format("$ 0,0"));
   };
 
   /* --------------------------------- tsx --------------------------------- */
-  // 92,179,255
+
   return (
     <Card
       className="bg-gray-900/30 backdrop-blur-2xl 
@@ -137,7 +133,7 @@ export default function SimulationChart({
               className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
 						appearance-none checked:bg-[rgb(100,180,255)]
 						focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-            active:shadow-[0_0_30px_rgba(100,180,255)]"
+            focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Average</span>
           </label>
@@ -151,7 +147,7 @@ export default function SimulationChart({
               className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
 						appearance-none checked:bg-[rgb(100,180,255)]
 						focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-            active:shadow-[0_0_30px_rgba(100,180,255)]"
+            focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Median</span>
           </label>
@@ -177,7 +173,7 @@ export default function SimulationChart({
               setLabelToIndex(chartData.length - 1);
             }}
           >
-            <CartesianGrid vertical={false} />
+            <CartesianGrid vertical={true} />
             <XAxis
               dataKey="year"
               tickLine={true}
@@ -185,7 +181,12 @@ export default function SimulationChart({
               tickMargin={8}
               ticks={xAxisTicks}
             />
-            <ChartTooltip cursor={true} content={<div></div>} />
+            <ChartTooltip
+              cursor={{
+                strokeWidth: 5,
+              }}
+              contentStyle={{ display: "none" }}
+            />
             <Line
               dataKey="portfolioValue"
               type="monotone"

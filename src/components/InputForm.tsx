@@ -1,9 +1,9 @@
 import { useState } from "react";
 import numeral from "numeral";
-import type { inputDataType } from "@/lib/types";
+import type { InputDataType } from "@/lib/types";
 
 interface inputProps {
-  setInputData: React.Dispatch<React.SetStateAction<inputDataType>>;
+  setInputData: React.Dispatch<React.SetStateAction<InputDataType>>;
 }
 
 export default function InputForm({ setInputData }: inputProps) {
@@ -93,7 +93,7 @@ export default function InputForm({ setInputData }: inputProps) {
     if (!monthlyAddition) setMonthlyAddition("0.00");
 
     // create and set new inputData type, put 0s if blank
-    const newInputData: inputDataType = {
+    const newInputData: InputDataType = {
       principal: parseFloat(principal.replace(/,/g, "")) || 0,
       monthlyContribution:
         (parseFloat(monthlyAddition.replace(/,/g, "")) || 0) *
@@ -165,7 +165,7 @@ export default function InputForm({ setInputData }: inputProps) {
               className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
                         appearance-none checked:bg-[rgb(100,180,255)]
                         focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)] 
-                        active:shadow-[0_0_30px_rgba(100,180,255)]"
+                        focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Contribution</span>
           </label>
@@ -179,7 +179,7 @@ export default function InputForm({ setInputData }: inputProps) {
               className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
                         appearance-none checked:bg-[rgb(100,180,255)]
                         focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-                        active:shadow-[0_0_30px_rgba(100,180,255)]"
+                        focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Withdrawal</span>
           </label>
@@ -206,11 +206,14 @@ export default function InputForm({ setInputData }: inputProps) {
       {/* Simulate Button */}
       <div className="flex justify-center">
         <button
-          onClick={setInputDataValue}
+          onClick={(e) => {
+            setInputDataValue();
+            (e.currentTarget as HTMLButtonElement).blur();
+          }}
           className="bg-[rgb(100,180,255)] text-white font-semibold px-4 py-2 rounded-md 
           hover:bg-[rgb(100,200,255)] active:bg-[rgb(100,180,255)]
           focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-          active:shadow-[0_0_30px_rgba(100,180,255)]"
+          focus:shadow-[0_0_30px_rgba(100,180,255)]"
         >
           Simulate
         </button>

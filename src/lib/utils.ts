@@ -1,18 +1,18 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { simulationData, stockPricePoint } from "./types";
+import type { SimulationData, StockPricePoint } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 // Reads snp500 data from SNP500.csv and return the result.
-export async function readSnpData(): Promise<stockPricePoint[]> {
+export async function readSnpData(): Promise<StockPricePoint[]> {
   try {
     const response = await fetch("/assets/SNP500.csv");
     const rawData: string = await response.text();
 
-    const data: stockPricePoint[] = rawData.split("\r\n").map((x) => {
+    const data: StockPricePoint[] = rawData.split("\r\n").map((x) => {
       const [date, price] = x.split(",");
       return { date: date, price: parseFloat(price) };
     });
@@ -27,13 +27,13 @@ export async function readSnpData(): Promise<stockPricePoint[]> {
 // Perform 10,000 simulations from randomly sampled monthly returns, based
 // on parameters, then return the result.
 export async function simulate(
-  snpData: stockPricePoint[],
+  snpData: StockPricePoint[],
   principal: number,
   monthlyContribution: number,
   durationMonths: number
-): Promise<simulationData[][]> {
+): Promise<SimulationData[][]> {
   const N = 10000;
-  const allSimulationData: simulationData[][] = [];
+  const allSimulationData: SimulationData[][] = [];
 
   // Calculate log(monthly returns) to sample from
   const monthlyReturns: number[] = [];
@@ -44,14 +44,14 @@ export async function simulate(
   // Simulate N number of times
   for (let n = 0; n < N; ++n) {
     // initialize first simulation data
-    let currentSimulation: simulationData[] = [
+    let currentSimulation: SimulationData[] = [
       { month: 0, portfolioValue: principal },
     ];
 
     // Simulate through all months
     for (let i = 0; i < durationMonths; ++i) {
       // Generate current data
-      const latestSim: simulationData =
+      const latestSim: SimulationData =
         currentSimulation[currentSimulation.length - 1];
       const month: number = latestSim.month + 1;
       let currentBalance: number = latestSim.portfolioValue;
@@ -78,22 +78,22 @@ export async function simulate(
   return allSimulationData;
 }
 
-// Extract the final portfolio value from 10,000 simulations, then return it.
+// Extract final portfolio value from 10,000 simulations, sort, then return it.
 // Note: for histogram purposes.
-export async function getFinalPortfolioDist(
-  allSimulationData: simulationData[][]
+export async function getFinalPortfolioDistSorted(
+  allSimulationData: SimulationData[][]
 ): Promise<number[]> {
-  return allSimulationData.map(
-    (x: simulationData[]) => x[x.length - 1].portfolioValue
-  );
+  return allSimulationData
+    .map((x: SimulationData[]) => x[x.length - 1].portfolioValue)
+    .sort((a, b) => a - b);
 }
 
 // Simplify the 10,000 simulation by averaging portfolio for each month.
 // Note: for charting purposes.
 export async function getSimulationAverage(
-  allSimulationData: simulationData[][]
-): Promise<simulationData[]> {
-  const averagedSimulationData: simulationData[] = [];
+  allSimulationData: SimulationData[][]
+): Promise<SimulationData[]> {
+  const averagedSimulationData: SimulationData[] = [];
 
   for (let month = 0; month < allSimulationData[0].length; ++month) {
     // Group all simulation data by current month
@@ -118,9 +118,9 @@ export async function getSimulationAverage(
 // Simplify the 10,000 simulation by taking the median portfolio for each month.
 // Note: for charting purposes.
 export async function getSimulationMedian(
-  allSimulationData: simulationData[][]
-): Promise<simulationData[]> {
-  const medianSimulationData: simulationData[] = [];
+  allSimulationData: SimulationData[][]
+): Promise<SimulationData[]> {
+  const medianSimulationData: SimulationData[] = [];
 
   for (let month = 0; month < allSimulationData[0].length; ++month) {
     // Group all simulation data by current month
