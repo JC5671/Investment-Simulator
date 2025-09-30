@@ -108,9 +108,9 @@ export default function InputForm({ setInputData }: inputProps) {
   return (
     <div
       className="
-      bg-gray-700/10 backdrop-blur-xl border border-white/20 p-6 rounded-xl 
-      space-y-6 text-gray-100 w-full max-w-sm
-      transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(0,255,255,0.9)]"
+      bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-6 rounded-xl 
+      space-y-6 text-white w-full max-w-sm
+      transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >
       {/* Input Header */}
       <div className="flex justify-center">
@@ -126,8 +126,9 @@ export default function InputForm({ setInputData }: inputProps) {
           id="principalText"
           type="text"
           inputMode="decimal"
-          className="border border-gray-700 rounded-md px-3 py-2 bg-gray-700/20 text-gray-200 
-          placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          className="border border-gray-700 rounded-md px-3 py-2 
+          bg-gray-900/50 backdrop-blur-3xl text-white placeholder-gray-400
+          focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={principal}
           onChange={(e) => setPrincipal(cleanCurrencyInput(e.target.value))}
           onBlur={(e) => setPrincipal(placeCurrencyComma(e.target.value))}
@@ -143,8 +144,9 @@ export default function InputForm({ setInputData }: inputProps) {
           id="contribution"
           type="text"
           inputMode="decimal"
-          className="border border-gray-700 rounded-md px-3 py-2 mb-3 bg-gray-700/20 text-gray-200 
-          placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          className="border border-gray-700 rounded-md px-3 py-2 mb-3
+          bg-gray-900/50 backdrop-blur-3xl text-white placeholder-gray-400
+          focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={monthlyAddition}
           onChange={(e) =>
             setMonthlyAddition(cleanCurrencyInput(e.target.value))
@@ -160,9 +162,10 @@ export default function InputForm({ setInputData }: inputProps) {
               value="contribution"
               checked={additionType === "contribution"}
               onChange={() => setAdditionType("contribution")}
-              className="w-5 h-5 rounded-full border-2 border-cyan-400
-                        appearance-none checked:bg-cyan-400
-                        focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+                        appearance-none checked:bg-[rgb(100,180,255)]
+                        focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)] 
+                        active:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Contribution</span>
           </label>
@@ -173,9 +176,10 @@ export default function InputForm({ setInputData }: inputProps) {
               value="withdrawal"
               checked={additionType === "withdrawal"}
               onChange={() => setAdditionType("withdrawal")}
-              className="w-5 h-5 rounded-full border-2 border-cyan-400
-                        appearance-none checked:bg-cyan-400
-                        focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+                        appearance-none checked:bg-[rgb(100,180,255)]
+                        focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+                        active:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Withdrawal</span>
           </label>
@@ -184,15 +188,16 @@ export default function InputForm({ setInputData }: inputProps) {
 
       {/* Duration Years */}
       <div className="flex flex-col space-y-2">
-        <label htmlFor="durationYears" className="font-medium">
+        <label htmlFor="duration" className="font-medium">
           Duration (Years)
         </label>
         <input
           id="duration"
           type="text"
           inputMode="numeric"
-          className="border border-gray-700 rounded-md px-3 py-2 bg-gray-700/20 text-gray-200 
-          placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          className="border border-gray-700 rounded-md px-3 py-2 
+          bg-gray-900/50 backdrop-blur-3xl text-white placeholder-gray-400
+          focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={durationYears}
           onChange={(e) => setDurationYears(onlyAllowInt(e.target.value))}
         />
@@ -202,9 +207,10 @@ export default function InputForm({ setInputData }: inputProps) {
       <div className="flex justify-center">
         <button
           onClick={setInputDataValue}
-          className="bg-cyan-500 text-white font-semibold px-4 py-2 rounded-md 
-          hover:bg-cyan-400 active:bg-cyan-500 
-          focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          className="bg-[rgb(100,180,255)] text-white font-semibold px-4 py-2 rounded-md 
+          hover:bg-[rgb(100,200,255)] active:bg-[rgb(100,180,255)]
+          focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+          active:shadow-[0_0_30px_rgba(100,180,255)]"
         >
           Simulate
         </button>

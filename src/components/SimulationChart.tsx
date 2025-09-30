@@ -32,7 +32,7 @@ export default function SimulationChart({
   const chartConfig = {
     portfolioValue: {
       label: "Portfolio Value",
-      color: "rgb(0 255 255)",
+      color: "rgb(100,180,255)",
     },
   } satisfies ChartConfig;
 
@@ -109,12 +109,12 @@ export default function SimulationChart({
   };
 
   /* --------------------------------- tsx --------------------------------- */
-
+  // 92,179,255
   return (
     <Card
-      className="bg-gray-700/10 backdrop-blur-xl 
-		border border-white/20 p-6 rounded-xl text-gray-100 w-full max-w-4xl
-      transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(0,255,255,0.9)]"
+      className="bg-gray-900/30 backdrop-blur-2xl 
+		  border border-white/20 p-6 rounded-xl w-full max-w-4xl
+      transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >
       {/* Title */}
       <CardHeader>
@@ -134,9 +134,10 @@ export default function SimulationChart({
               value="average"
               checked={resultMode === "average"}
               onChange={() => setResultMode("average")}
-              className="w-5 h-5 rounded-full border-2 border-cyan-400
-						appearance-none checked:bg-cyan-400
-						focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+						appearance-none checked:bg-[rgb(100,180,255)]
+						focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+            active:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Average</span>
           </label>
@@ -147,19 +148,20 @@ export default function SimulationChart({
               value="median"
               checked={resultMode === "median"}
               onChange={() => setResultMode("median")}
-              className="w-5 h-5 rounded-full border-2 border-cyan-400
-						appearance-none checked:bg-cyan-400
-						focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+						appearance-none checked:bg-[rgb(100,180,255)]
+						focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+            active:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Median</span>
           </label>
         </div>
 
         {/* Year and Portfolio Value Label */}
-        <div className="mb-1 text-xl text-[rgb(0,255,255)] text-center">
+        <div className="mb-1 text-xl text-white text-center">
           Year: {yearLabel}
         </div>
-        <div className="mb-1 text-xl text-[rgb(0,255,255)] text-center">
+        <div className="mb-1 text-xl text-white text-center">
           Portfolio: {portfolioLabel}
         </div>
 
@@ -178,21 +180,17 @@ export default function SimulationChart({
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="year"
-              tickLine={false}
-              axisLine={false}
+              tickLine={true}
+              axisLine={true}
               tickMargin={8}
               ticks={xAxisTicks}
             />
-            <ChartTooltip
-              cursor={true}
-              content={<ChartTooltipContent />}
-              formatter={(value: number) => `${numeral(value).format("$ 0,0")}`}
-            />
+            <ChartTooltip cursor={true} content={<div></div>} />
             <Line
               dataKey="portfolioValue"
               type="monotone"
               stroke={chartConfig.portfolioValue.color}
-              strokeWidth={2}
+              strokeWidth={4}
               dot={false}
             />
           </LineChart>
