@@ -108,8 +108,9 @@ export default function SimulationChart({
 
   return (
     <Card
-      className="bg-gray-900/30 backdrop-blur-2xl 
-		  border border-white/20 p-6 rounded-xl w-full max-w-4xl
+      className="
+      bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-6 rounded-xl
+		  w-full max-w-4xl text-white
       transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >
       {/* Title */}
@@ -130,10 +131,11 @@ export default function SimulationChart({
               value="average"
               checked={resultMode === "average"}
               onChange={() => setResultMode("average")}
-              className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
-						appearance-none checked:bg-[rgb(100,180,255)]
-						focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-            focus:shadow-[0_0_30px_rgba(100,180,255)]"
+              className="
+              w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+              appearance-none checked:bg-[rgb(100,180,255)]
+              focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+              focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Average</span>
           </label>
@@ -144,20 +146,19 @@ export default function SimulationChart({
               value="median"
               checked={resultMode === "median"}
               onChange={() => setResultMode("median")}
-              className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
-						appearance-none checked:bg-[rgb(100,180,255)]
-						focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-            focus:shadow-[0_0_30px_rgba(100,180,255)]"
+              className="
+              w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+              appearance-none checked:bg-[rgb(100,180,255)]
+              focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+              focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Median</span>
           </label>
         </div>
 
         {/* Year and Portfolio Value Label */}
-        <div className="mb-1 text-xl text-white text-center">
-          Year: {yearLabel}
-        </div>
-        <div className="mb-1 text-xl text-white text-center">
+        <div className="mb-1 text-xl text-center">Year: {yearLabel}</div>
+        <div className="mb-1 text-xl text-center">
           Portfolio: {portfolioLabel}
         </div>
 
@@ -173,19 +174,22 @@ export default function SimulationChart({
               setLabelToIndex(chartData.length - 1);
             }}
           >
-            <CartesianGrid vertical={true} />
+            <CartesianGrid vertical={false} />
             <XAxis
               dataKey="year"
-              tickLine={true}
-              axisLine={true}
+              tick={{ stroke: "rgba(255,255,255,1)" }}
+              tickLine={{ stroke: "rgba(255,255,255,0.7)" }}
+              axisLine={{ stroke: "rgba(255,255,255,0.7)" }}
               tickMargin={8}
               ticks={xAxisTicks}
             />
             <ChartTooltip
               cursor={{
-                strokeWidth: 5,
+                strokeWidth: 3,
               }}
-              contentStyle={{ display: "none" }}
+              contentStyle={{
+                display: "none",
+              }}
             />
             <Line
               dataKey="portfolioValue"

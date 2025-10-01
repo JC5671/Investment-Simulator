@@ -18,7 +18,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
   /* ------------------------------- States ------------------------------- */
 
   const [chartData, setChartData] = useState<HistChartData[]>([]);
-  const [inferenceSign, setInferenceSign] = useState<string>(">");
+  const [inferenceSign, setInferenceSign] = useState<string>("<");
   const [inferenceValue, setInferenceValue] = useState<string>("");
   const [inferenceProbability, setInferenceProbability] = useState<string>("");
 
@@ -74,9 +74,9 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
     }
 
     setChartData(localChartData);
-    setInferenceSign(">");
-    setInferenceValue("");
-    setInferenceProbability("");
+    setInferenceSign("<");
+    setInferenceValue(calculateValueFromProbability("5", "<"));
+    setInferenceProbability("5");
   }, [sortedDist]);
 
   /* ----------------------- Event Handler Functions ----------------------- */
@@ -170,9 +170,10 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
 
   return (
     <Card
-      className="bg-gray-900/30 backdrop-blur-2xl 
-		border border-white/20 p-6 rounded-xl w-full max-w-4xl
-      	transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
+      className="
+      bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-6 rounded-xl
+		  w-full max-w-4xl text-white
+      transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >
       {/* Title */}
       <CardHeader>
@@ -188,13 +189,16 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="bucket"
-              tickLine={true}
-              axisLine={true}
+              tick={{ stroke: "rgba(255,255,255,1)" }}
+              tickLine={{ stroke: "rgba(255,255,255,0.7)" }}
+              axisLine={{ stroke: "rgba(255,255,255,0.7)" }}
               tickMargin={8}
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent />}
+              content={
+                <ChartTooltipContent className="bg-gray-900/90 border-0" />
+              }
               formatter={(value: number) =>
                 `Frequency: ${(value * 100).toFixed(2)}%`
               }
@@ -209,10 +213,10 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
         </ChartContainer>
 
         {/* Inference Section */}
-        <div className="flex flex-col md:flex-row justify-center items-center gap-x-0 gap-y-1 mb-2 mt-5">
+        <div className="flex flex-col md:flex-row justify-center items-center gap-x-0 gap-y-1 mb-5 mt-5">
           {/* Probability Expression */}
           <div className="flex justify-center items-center">
-            <span className="text-md">{"P(Portfolio"}</span>
+            <span>{"P(Portfolio"}</span>
 
             {/* Sign Dropdown*/}
             <select
@@ -221,24 +225,26 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
                 setInferenceSign(e.target.value);
                 setInferenceProbability("");
               }}
-              className="border border-gray-700 rounded-md px-1 py-0
-				bg-gray-900/50 backdrop-blur-3xl text-white text-sm
-				focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
+              className="
+              border border-gray-700 rounded-md px-1 py-0
+              bg-gray-900/50 backdrop-blur-3xl text-sm
+              focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
             >
               <option value=">">{">"}</option>
               <option value="<">{"<"}</option>
             </select>
 
-            <span className="text-md">$</span>
+            <span>$</span>
 
             {/* Inference value */}
             <input
               id="portfolioValue"
               type="text"
               inputMode="decimal"
-              className="w-30 border border-gray-700 rounded-md px-1 py-0
-			bg-gray-900/50 backdrop-blur-3xl text-white text-md placeholder-gray-400
-			focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
+              className="
+              w-30 border border-gray-700 rounded-md px-1 py-0
+              bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
+              focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
               value={inferenceValue}
               onChange={(e) => {
                 const value: string = e.target.value;
@@ -252,7 +258,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
               }}
             />
 
-            <span className="text-md">{")"}</span>
+            <span>{")"}</span>
           </div>
 
           {/* Probability Result*/}
@@ -264,9 +270,10 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
               id="probability"
               type="text"
               inputMode="decimal"
-              className="w-16 border border-gray-700 rounded-md px-1 py-0
-			bg-gray-900/50 backdrop-blur-3xl text-white text-md placeholder-gray-400
-			focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
+              className="
+              w-16 border border-gray-700 rounded-md px-1 py-0
+              bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
+              focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
               value={inferenceProbability}
               onChange={(e) => {
                 const probability: string = onlyAllowDecimal(e.target.value);
@@ -291,6 +298,17 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
           </div>
         </div>
 
+        {/* Interpretation Section */}
+        <div className="flex justify-center mb-5">
+          {inferenceProbability && inferenceValue && (
+            <span className="text-center">
+              {`"There is a ${inferenceProbability}% probability that the portfolio's value will be ${
+                inferenceSign === "<" ? "less than" : "more than"
+              } $${inferenceValue}"`}
+            </span>
+          )}
+        </div>
+
         {/* Calculate Button */}
         <div className="flex justify-center">
           <button
@@ -309,10 +327,11 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
               }
               (e.currentTarget as HTMLButtonElement).blur();
             }}
-            className="bg-[rgb(100,180,255)] text-white font-semibold px-4 py-2 rounded-md 
-					hover:bg-[rgb(100,200,255)] active:bg-[rgb(100,180,255)]
-					focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-					focus:shadow-[0_0_30px_rgba(100,180,255)]"
+            className="
+            bg-[rgb(100,180,255)] font-semibold px-4 py-2 rounded-md 
+            hover:bg-[rgb(100,200,255)] active:bg-[rgb(100,180,255)]
+            focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+            focus:shadow-[0_0_30px_rgba(100,180,255)]"
           >
             Calculate
           </button>

@@ -109,7 +109,7 @@ export default function InputForm({ setInputData }: inputProps) {
     <div
       className="
       bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-6 rounded-xl 
-      space-y-6 text-white w-full max-w-sm
+      space-y-6  w-full max-w-sm text-white
       transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >
       {/* Input Header */}
@@ -126,8 +126,9 @@ export default function InputForm({ setInputData }: inputProps) {
           id="principalText"
           type="text"
           inputMode="decimal"
-          className="border border-gray-700 rounded-md px-3 py-2 
-          bg-gray-900/50 backdrop-blur-3xl text-white placeholder-gray-400
+          className="
+          border border-gray-700 rounded-md px-3 py-2 
+          bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
           focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={principal}
           onChange={(e) => setPrincipal(cleanCurrencyInput(e.target.value))}
@@ -144,8 +145,9 @@ export default function InputForm({ setInputData }: inputProps) {
           id="contribution"
           type="text"
           inputMode="decimal"
-          className="border border-gray-700 rounded-md px-3 py-2 mb-3
-          bg-gray-900/50 backdrop-blur-3xl text-white placeholder-gray-400
+          className="
+          border border-gray-700 rounded-md px-3 py-2 mb-3
+          bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
           focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={monthlyAddition}
           onChange={(e) =>
@@ -162,10 +164,11 @@ export default function InputForm({ setInputData }: inputProps) {
               value="contribution"
               checked={additionType === "contribution"}
               onChange={() => setAdditionType("contribution")}
-              className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
-                        appearance-none checked:bg-[rgb(100,180,255)]
-                        focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)] 
-                        focus:shadow-[0_0_30px_rgba(100,180,255)]"
+              className="
+              w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+              appearance-none checked:bg-[rgb(100,180,255)]
+              focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)] 
+              focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Contribution</span>
           </label>
@@ -176,10 +179,11 @@ export default function InputForm({ setInputData }: inputProps) {
               value="withdrawal"
               checked={additionType === "withdrawal"}
               onChange={() => setAdditionType("withdrawal")}
-              className="w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
-                        appearance-none checked:bg-[rgb(100,180,255)]
-                        focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-                        focus:shadow-[0_0_30px_rgba(100,180,255)]"
+              className="
+              w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+              appearance-none checked:bg-[rgb(100,180,255)]
+              focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+              focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Withdrawal</span>
           </label>
@@ -195,8 +199,9 @@ export default function InputForm({ setInputData }: inputProps) {
           id="duration"
           type="text"
           inputMode="numeric"
-          className="border border-gray-700 rounded-md px-3 py-2 
-          bg-gray-900/50 backdrop-blur-3xl text-white placeholder-gray-400
+          className="
+          border border-gray-700 rounded-md px-3 py-2 
+          bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
           focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={durationYears}
           onChange={(e) => setDurationYears(onlyAllowInt(e.target.value))}
@@ -210,7 +215,8 @@ export default function InputForm({ setInputData }: inputProps) {
             setInputDataValue();
             (e.currentTarget as HTMLButtonElement).blur();
           }}
-          className="bg-[rgb(100,180,255)] text-white font-semibold px-4 py-2 rounded-md 
+          className="
+          bg-[rgb(100,180,255)] font-semibold px-4 py-2 rounded-md 
           hover:bg-[rgb(100,200,255)] active:bg-[rgb(100,180,255)]
           focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
           focus:shadow-[0_0_30px_rgba(100,180,255)]"
