@@ -12,10 +12,12 @@ export async function readSnpData(): Promise<StockPricePoint[]> {
     const response = await fetch("/assets/SNP500.csv");
     const rawData: string = await response.text();
 
-    const data: StockPricePoint[] = rawData.split("\r\n").map((x) => {
+    const data: StockPricePoint[] = rawData.split("\n").map((x) => {
       const [date, price] = x.split(",");
       return { date: date, price: parseFloat(price) };
     });
+
+    console.table(data);
 
     return data;
   } catch (err) {

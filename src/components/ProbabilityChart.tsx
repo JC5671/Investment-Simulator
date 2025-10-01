@@ -63,7 +63,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
       const scale: string[] = ["", "K", "M", "B", "T"];
       let bucketLabel = labelParts[0];
       bucketLabel +=
-        bucketLabel.length <= 1 ? "" : "." + labelParts[1].slice(0, 2);
+        labelParts.length <= 1 ? "" : "." + labelParts[1].slice(0, 2);
       bucketLabel += scale[labelParts.length - 1];
 
       // Add to list of buckets
