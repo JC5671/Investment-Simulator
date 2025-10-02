@@ -85,8 +85,13 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
   const cleanCurrencyInput = (value: string): string => {
     if (!value) return "";
 
-    // Remove everything except digits, dot, and comma
-    let cleaned: string = value.replace(/[^\d,]/g, "");
+    // Remove everything except digits, minus sign and comma
+    let cleaned: string = value.replace(/[^\d,-]/g, "");
+
+    // Ensure only one '-' at the start
+    if (cleaned.includes("-")) {
+      cleaned = "-" + cleaned.replace(/-/g, "");
+    }
 
     return cleaned;
   };
@@ -223,7 +228,9 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
               value={inferenceSign}
               onChange={(e) => {
                 setInferenceSign(e.target.value);
-                setInferenceProbability("");
+                if (inferenceValue && inferenceProbability) {
+                  setInferenceProbability("");
+                }
               }}
               className="
               border border-gray-700 rounded-md px-1 py-0
@@ -301,10 +308,14 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
         {/* Interpretation Section */}
         <div className="flex justify-center mb-5">
           {inferenceProbability && inferenceValue && (
-            <span className="text-center">
+            <span className="text-center italic">
               {`"There is a ${inferenceProbability}% probability that the portfolio's value will be ${
                 inferenceSign === "<" ? "less than" : "more than"
-              } $${inferenceValue}"`}
+              } ${
+                parseInt(inferenceValue) < 0
+                  ? "-$" + inferenceValue.replace("-", "")
+                  : "$" + inferenceValue
+              }"`}
             </span>
           )}
         </div>
