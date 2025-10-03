@@ -18,13 +18,12 @@ export default function SimulationChart({
   /* ------------------------------- States ------------------------------- */
 
   const [title, setTitle] = useState<string>("");
-  const [resultMode, setResultMode] = useState<string>("average");
+  const [resultMode, setResultMode] = useState<string>("median");
   const [yearLabel, setYearLabel] = useState<string>("");
   const [portfolioLabel, setPortfolioLabel] = useState<string>("");
   const [chartData, setChartData] = useState<SimChartData[]>([]);
   const [xAxisTicks, setXAxisTicks] = useState<string[]>([]);
 
-  // constants
   const chartConfig = {
     portfolioValue: {
       label: "Portfolio Value",
@@ -34,8 +33,8 @@ export default function SimulationChart({
 
   /* ------------------------------- Effects ------------------------------- */
 
-  // when simulation data or result mode has changed,
-  // determine chart properties and set it
+  // When simulation data or result mode has changed,
+  // determine chart properties and set it to update the chart.
   useEffect(() => {
     if (resultMode === "average" && averagedSimulationData.length === 0) return;
     if (resultMode === "median" && medianSimulationData.length === 0) return;
@@ -66,8 +65,8 @@ export default function SimulationChart({
     setYearLabel(year);
     setPortfolioLabel(`${numeral(portfolio).format("$ 0,0")}`);
 
-    // Set the tick years to be every 5 years
-    // get the recurrence
+    // Determine the tick years and set it
+    // get tick years
     const recurrence: number = 5;
     let tickYear: string[] = localChartData
       .filter((_, i) => i % recurrence == 0)
@@ -75,7 +74,6 @@ export default function SimulationChart({
     // force beginning and end
     tickYear.unshift(localChartData[0].year);
     tickYear.push(localChartData[localChartData.length - 1].year);
-    // make unique
     tickYear = [...new Set(tickYear)];
     // remove the last tick if last two tick gap is 3 or less,
     // except when length is less than 3
@@ -88,13 +86,13 @@ export default function SimulationChart({
         tickYear.pop();
       }
     }
-    // set axis tick
+    // set tick years
     setXAxisTicks(tickYear);
   }, [averagedSimulationData, medianSimulationData, resultMode]);
 
   /* ----------------------- Event Handler Functions ----------------------- */
 
-  // set the year and portfolio label
+  // Set the year and portfolio label.
   const setLabelToIndex = (index: number) => {
     if (resultMode === "average" && averagedSimulationData.length === 0) return;
     if (resultMode === "median" && medianSimulationData.length === 0) return;
@@ -128,21 +126,6 @@ export default function SimulationChart({
             <input
               type="radio"
               name="resultMode"
-              value="average"
-              checked={resultMode === "average"}
-              onChange={() => setResultMode("average")}
-              className="
-              w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
-              appearance-none checked:bg-[rgb(100,180,255)]
-              focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
-              focus:shadow-[0_0_30px_rgba(100,180,255)]"
-            />
-            <span>Average</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input
-              type="radio"
-              name="resultMode"
               value="median"
               checked={resultMode === "median"}
               onChange={() => setResultMode("median")}
@@ -153,6 +136,21 @@ export default function SimulationChart({
               focus:shadow-[0_0_30px_rgba(100,180,255)]"
             />
             <span>Median</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="resultMode"
+              value="average"
+              checked={resultMode === "average"}
+              onChange={() => setResultMode("average")}
+              className="
+              w-5 h-5 rounded-full border-2 border-[rgb(100,180,255)]
+              appearance-none checked:bg-[rgb(100,180,255)]
+              focus:outline-none focus:ring-2 focus:ring-[rgb(100,180,255)]
+              focus:shadow-[0_0_30px_rgba(100,180,255)]"
+            />
+            <span>Average</span>
           </label>
         </div>
 

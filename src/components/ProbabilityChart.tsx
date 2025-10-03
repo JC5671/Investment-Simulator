@@ -31,6 +31,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
 
   /* ------------------------------- Effects ------------------------------- */
 
+  // When the simulation data changes (sortedDist), generate histogram
   useEffect(() => {
     if (sortedDist.length === 0) return;
 
@@ -50,6 +51,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
     const max: number = Math.max(...filteredDist);
     const gap: number = (max - min) / bucket;
 
+    // For each bucket range
     const localChartData: HistChartData[] = [];
     for (let curr = min; curr < max; curr += gap) {
       // Calculate frequency
@@ -73,19 +75,29 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
       });
     }
 
+    // Set the data
     setChartData(localChartData);
-    setInferenceSign("<");
-    setInferenceValue(calculateValueFromProbability("5", "<"));
-    setInferenceProbability("5");
+
+    // For the inference section, try to get 5% risk first.
+    // If that is negative, do a risk of losing all the money.
+    if (parseInt(calculateValueFromProbability("5", "<")) < 0) {
+      setInferenceSign("<");
+      setInferenceValue("0");
+      setInferenceProbability(calculateProbabilityFromValue("0", "<"));
+    } else {
+      setInferenceSign("<");
+      setInferenceProbability("5");
+      setInferenceValue(calculateValueFromProbability("5", "<"));
+    }
   }, [sortedDist]);
 
   /* ----------------------- Event Handler Functions ----------------------- */
 
-  // Removes all character except digits, dot, comma. Enforce 2 decimal places.
+  // Removes all character except digits, '-', comma. Enforce 2 decimal places.
   const cleanCurrencyInput = (value: string): string => {
     if (!value) return "";
 
-    // Remove everything except digits, minus sign and comma
+    // Remove everything except digits, minus sign, and comma
     let cleaned: string = value.replace(/[^\d,-]/g, "");
 
     // Ensure only one '-' at the start
@@ -111,6 +123,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
     return numeral(num).format("0,0");
   };
 
+  // Removes all character except digits and dot. Enforce 2 decimal places.
   const onlyAllowDecimal = (value: string): string => {
     if (!value) return "";
 
@@ -131,24 +144,39 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
     return cleaned;
   };
 
+  // Calculates percentage of sortedDist elements above or below a given value.
   const calculateProbabilityFromValue = (
     value: string,
     sign: string
   ): string => {
     const valueNum: number = parseFloat(value.replace(/,/g, ""));
+    const n = sortedDist.length;
 
-    let count: number = 0;
-    if (sign === ">") {
-      count += sortedDist.filter((x: number) => x > valueNum).length;
-    } else {
-      count += sortedDist.filter((x: number) => x < valueNum).length;
+    // Binary search for cutoff index
+    let low = 0;
+    let high = n;
+    while (low < high) {
+      const mid = Math.floor((low + high) / 2);
+      if (sortedDist[mid] <= valueNum) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
     }
 
-    const probability: number = (count / sortedDist.length) * 100;
+    // low = index of first element > valueNum
+    let count: number;
+    if (sign === ">") {
+      count = n - low; // elements strictly greater
+    } else {
+      count = low; // elements strictly less or equal
+    }
 
+    const probability: number = (count / n) * 100;
     return probability.toFixed(2);
   };
 
+  // Returns the cutoff value in sortedDist for a given probability in percent.
   const calculateValueFromProbability = (
     probability: string,
     sign: string
@@ -268,11 +296,10 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
             <span>{")"}</span>
           </div>
 
-          {/* Probability Result*/}
+          {/* Inference Probability*/}
           <div className="flex justify-center items-center">
             <span>{"="}</span>
 
-            {/* Inference Probability */}
             <input
               id="probability"
               type="text"
@@ -309,7 +336,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
         <div className="flex justify-center mb-5">
           {inferenceProbability && inferenceValue && (
             <span className="text-center italic">
-              {`"There is a ${inferenceProbability}% probability that the portfolio's value will be ${
+              {`"There is a ${inferenceProbability}% probability that the final portfolio's value will be ${
                 inferenceSign === "<" ? "less than" : "more than"
               } ${
                 parseInt(inferenceValue) < 0

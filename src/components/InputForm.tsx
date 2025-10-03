@@ -52,15 +52,15 @@ export default function InputForm({ setInputData }: inputProps) {
     return numeral(num).format("0,0.00");
   };
 
-  // Enforce only digits
+  // Enforce only digits.
   const onlyAllowInt = (value: string): string => {
     if (!value) return "";
 
     return value.replace(/[^0-9]/g, "");
   };
 
-  // Check that duration is no more than 100 years.
-  // Returns true if duration is less than 100 years, otherwise return false.
+  // Check that duration is not 0, not empty, and not more than 100 years.
+  // Returns true if passes the checks, otherwise return false.
   const checkDurationLength = (durationYears: string): boolean => {
     if (!durationYears) {
       alert("Duration cannot be empty!!!");
@@ -83,9 +83,9 @@ export default function InputForm({ setInputData }: inputProps) {
     return true;
   };
 
-  // Set the inputValue state from parent, essentially return by reference.
+  // Update the parent's inputData state based on current input field values.
   const setInputDataValue = () => {
-    // Guard Clause: make sure duration is not more than 100 years
+    // Guard Clause: make sure duration is not more than 100 years, 0, or empty
     if (!checkDurationLength(durationYears)) return;
 
     // Put 0s in the input if blank
@@ -155,6 +155,7 @@ export default function InputForm({ setInputData }: inputProps) {
           }
           onBlur={(e) => setMonthlyAddition(placeCurrencyComma(e.target.value))}
         />
+
         {/* Radio buttons */}
         <div className="flex space-x-6 mx-auto">
           <label className="flex items-center space-x-2">
