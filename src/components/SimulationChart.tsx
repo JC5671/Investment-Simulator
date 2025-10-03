@@ -53,7 +53,7 @@ export default function SimulationChart({
 
     // Set the title
     setTitle(
-      `Investment Simulation for ${
+      `Investment Simulation Timeline for ${
         localChartData[localChartData.length - 1].year
       } Years`
     );

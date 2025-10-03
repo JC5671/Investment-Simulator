@@ -17,8 +17,6 @@ export async function readSnpData(): Promise<StockPricePoint[]> {
       return { date: date, price: parseFloat(price) };
     });
 
-    console.table(data);
-
     return data;
   } catch (err) {
     console.error(`Error Reading SNP CSV: ${err}`);
@@ -65,7 +63,11 @@ export async function simulate(
       const returnRate: number = Math.exp(monthlyReturns[randIndex]);
 
       // multiply balance by return rate, then add monthly addition
-      currentBalance = currentBalance * returnRate + monthlyContribution;
+      // If balance is less than 0, cap it at 0 but still record it
+      currentBalance = Math.max(
+        currentBalance * returnRate + monthlyContribution,
+        0
+      );
 
       // append new simulation data
       currentSimulation.push({
@@ -80,14 +82,27 @@ export async function simulate(
   return allSimulationData;
 }
 
-// Extract final portfolio value from 10,000 simulations, sort, then return it.
-// Note: for histogram purposes.
-export async function getFinalPortfolioDistSorted(
+// Extract final portfolio value from 10,000 simulations, sort, eliminate
+// outliers, then return it.
+export async function getFinalPortfolioDistProcessed(
   allSimulationData: SimulationData[][]
 ): Promise<number[]> {
-  return allSimulationData
+  // Grab the final portfolio value and sort it
+  const sortedDist: number[] = allSimulationData
     .map((x: SimulationData[]) => x[x.length - 1].portfolioValue)
     .sort((a, b) => a - b);
+
+  // Remove outliers
+  const q1: number = sortedDist[Math.floor(sortedDist.length * 0.25)];
+  const q3: number = sortedDist[Math.floor(sortedDist.length * 0.75)];
+  const iqr: number = q3 - q1;
+  const lowerBound: number = q1 - 1.5 * iqr;
+  const upperBound: number = q3 + 1.5 * iqr;
+  const filteredDist: number[] = sortedDist.filter(
+    (x: number) => lowerBound <= x && x <= upperBound
+  );
+
+  return filteredDist;
 }
 
 // Simplify the 10,000 simulation by averaging portfolio for each month.

@@ -7,20 +7,23 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import type { MouseEvent } from "react";
 import type { HistChartData } from "@/lib/types";
 import type { ChartConfig } from "@/components/ui/chart";
 
 interface ChartProps {
-  sortedDist: number[];
+  finalDist: number[];
+  finalYear: number;
 }
 
-export default function ProbabilityChart({ sortedDist }: ChartProps) {
+export default function ProbabilityChart({ finalDist, finalYear }: ChartProps) {
   /* ------------------------------- States ------------------------------- */
 
   const [chartData, setChartData] = useState<HistChartData[]>([]);
-  const [inferenceSign, setInferenceSign] = useState<string>("<");
+  const [inferenceSign, setInferenceSign] = useState<string>("<=");
   const [inferenceValue, setInferenceValue] = useState<string>("");
   const [inferenceProbability, setInferenceProbability] = useState<string>("");
+  const [interpretation, setInterpretation] = useState<string>("");
 
   const chartConfig = {
     frequency: {
@@ -31,34 +34,29 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
 
   /* ------------------------------- Effects ------------------------------- */
 
-  // When the simulation data changes (sortedDist), generate histogram
+  // When the simulation data changes (finalDist), generate histogram.
   useEffect(() => {
-    if (sortedDist.length === 0) return;
-
-    // Remove outliers in the portfolio dist
-    const q1: number = sortedDist[Math.floor(sortedDist.length * 0.25)];
-    const q3: number = sortedDist[Math.floor(sortedDist.length * 0.75)];
-    const iqr: number = q3 - q1;
-    const lowerBound: number = q1 - 1.5 * iqr;
-    const upperBound: number = q3 + 1.5 * iqr;
-    const filteredDist: number[] = sortedDist.filter(
-      (x: number) => lowerBound <= x && x <= upperBound
-    );
+    if (finalDist.length === 0) return;
 
     // Process distribution into histogram bucket
-    const bucket: number = 100;
-    const min: number = Math.min(...filteredDist);
-    const max: number = Math.max(...filteredDist);
-    const gap: number = (max - min) / bucket;
+    const dataRange = Math.floor(
+      finalDist[finalDist.length - 1] - finalDist[0]
+    );
+    const bucket: number = Math.min(dataRange, 100);
+    const min: number = Math.floor(Math.min(...finalDist));
+    const max: number = Math.floor(Math.max(...finalDist));
+    const gap: number = Math.floor((max - min) / bucket);
+
+    console.log;
 
     // For each bucket range
     const localChartData: HistChartData[] = [];
     for (let curr = min; curr < max; curr += gap) {
       // Calculate frequency
-      const count: number = filteredDist.filter(
+      const count: number = finalDist.filter(
         (x: number) => curr <= x && x <= curr + gap
       ).length;
-      const frequency: number = count / filteredDist.length;
+      const frequency: number = count / finalDist.length;
 
       // Generate label part: 1.24M, 1.33B, etc.
       const labelParts: string[] = numeral(curr).format("$0,0").split(",");
@@ -78,32 +76,41 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
     // Set the data
     setChartData(localChartData);
 
-    // For the inference section, try to get 5% risk first.
-    // If that is negative, do a risk of losing all the money.
-    if (parseInt(calculateValueFromProbability("5", "<")) < 0) {
-      setInferenceSign("<");
-      setInferenceValue("0");
-      setInferenceProbability(calculateProbabilityFromValue("0", "<"));
-    } else {
-      setInferenceSign("<");
-      setInferenceProbability("5");
-      setInferenceValue(calculateValueFromProbability("5", "<"));
+    // Preset the probability to the risk of losing all the portfolio
+    setInferenceSign("<=");
+    setInferenceValue("0");
+    setInferenceProbability(calculateProbabilityFromValue("0", "<="));
+  }, [finalDist]);
+
+  // When the inferenceValue or inferenceProbability changes, then reinterpret.
+  useEffect(() => {
+    // Guard Clause: Make sure none are blank
+    if (!inferenceValue || !inferenceProbability) {
+      setInterpretation("");
+      return;
     }
-  }, [sortedDist]);
+
+    // Determine the message
+    let msg: string = `"There is a ${inferenceProbability}%`;
+    msg += " chance that the final portfolio's value will be ";
+    if (inferenceSign === "<=") {
+      msg += inferenceValue !== "0" ? "less than" : "equal to";
+    } else {
+      msg += "greater than";
+    }
+    msg += ` ${inferenceValue}"`;
+
+    setInterpretation(msg);
+  }, [inferenceValue, inferenceProbability]);
 
   /* ----------------------- Event Handler Functions ----------------------- */
 
-  // Removes all character except digits, '-', comma. Enforce 2 decimal places.
+  // Removes all character except digits and comma. Enforce 2 decimal places.
   const cleanCurrencyInput = (value: string): string => {
     if (!value) return "";
 
-    // Remove everything except digits, minus sign, and comma
-    let cleaned: string = value.replace(/[^\d,-]/g, "");
-
-    // Ensure only one '-' at the start
-    if (cleaned.includes("-")) {
-      cleaned = "-" + cleaned.replace(/-/g, "");
-    }
+    // Remove everything except digits and comma
+    let cleaned: string = value.replace(/[^\d,]/g, "");
 
     return cleaned;
   };
@@ -144,59 +151,92 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
     return cleaned;
   };
 
-  // Calculates percentage of sortedDist elements above or below a given value.
+  // Calculates percentage of finalDist elements above or below a given value.
   const calculateProbabilityFromValue = (
     value: string,
     sign: string
   ): string => {
     const valueNum: number = parseFloat(value.replace(/,/g, ""));
-    const n = sortedDist.length;
+    const n = finalDist.length;
 
     // Binary search for cutoff index
     let low = 0;
     let high = n;
     while (low < high) {
       const mid = Math.floor((low + high) / 2);
-      if (sortedDist[mid] <= valueNum) {
+      if (finalDist[mid] <= valueNum) {
         low = mid + 1;
       } else {
         high = mid;
       }
     }
 
-    // low = index of first element > valueNum
-    let count: number;
-    if (sign === ">") {
-      count = n - low; // elements strictly greater
-    } else {
-      count = low; // elements strictly less or equal
-    }
+    // calculate the probability of less than or greater than
+    const countLessThan: number = low;
+    const probabilityLessThan: number = (countLessThan / n) * 100;
+    const probability: number =
+      sign === "<=" ? probabilityLessThan : 100.0 - probabilityLessThan;
 
-    const probability: number = (count / n) * 100;
     return probability.toFixed(2);
   };
 
-  // Returns the cutoff value in sortedDist for a given probability in percent.
+  // Returns the cutoff value in finalDist for a given probability in percent.
   const calculateValueFromProbability = (
     probability: string,
     sign: string
   ): string => {
-    const n: number = sortedDist.length;
+    const n: number = finalDist.length;
     const p: number = parseFloat(probability) / 100;
+
+    // determine target index
     let targetIndex: number = 0;
-
-    // upper tail of distribution
-    if (sign === ">") {
-      targetIndex = Math.floor(n * (1 - p));
-    }
-    // lower tail of distribution
-    else {
-      targetIndex = Math.floor(n * p);
+    if (sign === "<=") {
+      targetIndex = Math.floor(n * p) - 1; // lower tail of the distribution
+    } else {
+      targetIndex = Math.floor(n * (1 - p)); // upper tail of the distribution
     }
 
+    // clamp index into range
     targetIndex = Math.min(Math.max(targetIndex, 0), n - 1);
 
-    return numeral(sortedDist[targetIndex]).format("0,0");
+    return numeral(finalDist[targetIndex]).format("0,0");
+  };
+
+  // When the calculate button is clicked, calculate and set either
+  // the probability from value, or the value from probability.
+  const handleCalculateButtonClicked = (e: MouseEvent<HTMLButtonElement>) => {
+    // Remove focus from the button
+    (e.currentTarget as HTMLButtonElement).blur();
+
+    // calculate probability if that is the only thing blank
+    if (!inferenceProbability && inferenceValue) {
+      setInferenceProbability(
+        calculateProbabilityFromValue(inferenceValue, inferenceSign)
+      );
+    }
+    // calculate value if that is the only thing blank
+    else if (inferenceProbability && !inferenceValue) {
+      const value: string = calculateValueFromProbability(
+        inferenceProbability,
+        inferenceSign
+      );
+
+      // Calculate percent difference to make sure the probabilites are similar
+      const probability: number = parseFloat(inferenceProbability);
+      const recalculatedProbability: number = parseFloat(
+        calculateProbabilityFromValue(value, inferenceSign)
+      );
+      const percentDiff: number =
+        Math.abs(probability - recalculatedProbability) /
+        recalculatedProbability;
+
+      // Set the inference value
+      setInferenceValue(value);
+      // but set the probability to the recalculated one if percent difference
+      // is greater than 5%
+      if (percentDiff > 0.05)
+        setInferenceProbability(recalculatedProbability.toFixed(2));
+    }
   };
 
   /* --------------------------------- tsx --------------------------------- */
@@ -211,7 +251,7 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
       {/* Title */}
       <CardHeader>
         <CardTitle className="text-2xl font-semibold mb-1 text-center">
-          Final Portfolio Distribution
+          Final Year {finalYear.toFixed(0)}: Portfolio Distribution
         </CardTitle>
       </CardHeader>
 
@@ -256,17 +296,16 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
               value={inferenceSign}
               onChange={(e) => {
                 setInferenceSign(e.target.value);
-                if (inferenceValue && inferenceProbability) {
+                if (inferenceValue && inferenceProbability)
                   setInferenceProbability("");
-                }
               }}
               className="
               border border-gray-700 rounded-md px-1 py-0
               bg-gray-900/50 backdrop-blur-3xl text-sm
               focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
             >
-              <option value=">">{">"}</option>
-              <option value="<">{"<"}</option>
+              <option value=">=">{"≥"}</option>
+              <option value="<=">{"≤"}</option>
             </select>
 
             <span>$</span>
@@ -283,14 +322,13 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
               value={inferenceValue}
               onChange={(e) => {
                 const value: string = e.target.value;
-                if (value !== "" && value !== inferenceValue) {
+                if (value !== "" && value !== inferenceValue)
                   setInferenceProbability("");
-                }
                 setInferenceValue(cleanCurrencyInput(e.target.value));
               }}
-              onBlur={(e) => {
-                setInferenceValue(placeCurrencyComma(e.target.value));
-              }}
+              onBlur={(e) =>
+                setInferenceValue(placeCurrencyComma(e.target.value))
+              }
             />
 
             <span>{")"}</span>
@@ -311,15 +349,13 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
               value={inferenceProbability}
               onChange={(e) => {
                 const probability: string = onlyAllowDecimal(e.target.value);
-                if (
-                  probability !== inferenceProbability &&
-                  probability !== ""
-                ) {
+                // clear the inference value if inputted probability is valid
+                if (probability !== inferenceProbability && probability !== "")
                   setInferenceValue("");
-                }
                 setInferenceProbability(probability);
               }}
               onBlur={(e) => {
+                // make sure the input probability is not more than 100%
                 const probability: string =
                   parseFloat(e.target.value) > 100.0
                     ? "100.00"
@@ -335,36 +371,14 @@ export default function ProbabilityChart({ sortedDist }: ChartProps) {
         {/* Interpretation Section */}
         <div className="flex justify-center mb-5">
           {inferenceProbability && inferenceValue && (
-            <span className="text-center italic">
-              {`"There is a ${inferenceProbability}% probability that the final portfolio's value will be ${
-                inferenceSign === "<" ? "less than" : "more than"
-              } ${
-                parseInt(inferenceValue) < 0
-                  ? "-$" + inferenceValue.replace("-", "")
-                  : "$" + inferenceValue
-              }"`}
-            </span>
+            <span className="text-center italic">{interpretation}</span>
           )}
         </div>
 
         {/* Calculate Button */}
         <div className="flex justify-center">
           <button
-            onClick={(e) => {
-              if (!inferenceProbability && inferenceValue) {
-                setInferenceProbability(
-                  calculateProbabilityFromValue(inferenceValue, inferenceSign)
-                );
-              } else if (inferenceProbability && !inferenceValue) {
-                setInferenceValue(
-                  calculateValueFromProbability(
-                    inferenceProbability,
-                    inferenceSign
-                  )
-                );
-              }
-              (e.currentTarget as HTMLButtonElement).blur();
-            }}
+            onClick={handleCalculateButtonClicked}
             className="
             bg-[rgb(100,180,255)] font-semibold px-4 py-2 rounded-md 
             hover:bg-[rgb(100,200,255)] active:bg-[rgb(100,180,255)]

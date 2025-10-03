@@ -10,7 +10,7 @@ import type {
 import {
   readSnpData,
   simulate,
-  getFinalPortfolioDistSorted,
+  getFinalPortfolioDistProcessed,
   getSimulationAverage,
   getSimulationMedian,
 } from "@/lib/utils";
@@ -56,7 +56,7 @@ export default function SimulatorPage() {
       inputData.durationMonths
     )
       .then((allSimulationData: SimulationData[][]) => {
-        getFinalPortfolioDistSorted(allSimulationData).then((data) =>
+        getFinalPortfolioDistProcessed(allSimulationData).then((data) =>
           setSortedFinalPortfolioDist(data)
         );
         getSimulationAverage(allSimulationData).then((data) =>
@@ -95,7 +95,10 @@ export default function SimulatorPage() {
 
           {/* Probability Chart */}
           <div className="flex justify-center mb-10">
-            <ProbabilityChart sortedDist={sortedFinalPortfolioDist} />
+            <ProbabilityChart
+              finalDist={sortedFinalPortfolioDist}
+              finalYear={inputData.durationMonths / 12}
+            />
           </div>
         </>
       )}
