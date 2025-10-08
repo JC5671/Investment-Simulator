@@ -107,7 +107,7 @@ export default function SimulationChart({
   return (
     <Card
       className="
-      bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-6 rounded-xl
+      bg-gray-900/80 backdrop-blur-md border-0 p-6 rounded-xl
 		  w-full max-w-4xl text-white
       transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >

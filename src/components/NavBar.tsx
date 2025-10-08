@@ -7,7 +7,7 @@ export default function NavBar() {
     <div className="flex justify-center">
       <div
         className="
-      flex bg-gray-900/30 backdrop-blur-2xl border border-white/20 rounded-full
+      flex bg-gray-900/80 backdrop-blur-md border-0 rounded-full
       space-x-1 text-white mt-5 p-1 
       transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
       >

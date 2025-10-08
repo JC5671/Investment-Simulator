@@ -5,9 +5,7 @@ export default function Footer() {
     <footer className="flex justify-center">
       <div
         className="
-		flex bg-gray-900/30 backdrop-blur-2xl border border-white/20 rounded-xl
-		space-x-3 text-white mb-5
-		transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
+		flex text-white mb-5"
       >
         {/* LinkedIn Link */}
         <a

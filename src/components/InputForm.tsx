@@ -108,8 +108,8 @@ export default function InputForm({ setInputData }: inputProps) {
   return (
     <div
       className="
-      bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-6 rounded-xl 
-      space-y-6 w-full max-w-sm text-white
+      bg-gray-900/80 backdrop-blur-md border-0 p-6 rounded-xl
+      space-y-6 w-full max-w-sm text-white 
       transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >
       {/* Input Header */}
@@ -127,8 +127,7 @@ export default function InputForm({ setInputData }: inputProps) {
           type="text"
           inputMode="decimal"
           className="
-          border border-gray-700 rounded-md px-3 py-2 
-          bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
+          rounded-md px-3 py-2 bg-gray-100/10
           focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={principal}
           onChange={(e) => setPrincipal(cleanCurrencyInput(e.target.value))}
@@ -146,8 +145,7 @@ export default function InputForm({ setInputData }: inputProps) {
           type="text"
           inputMode="decimal"
           className="
-          border border-gray-700 rounded-md px-3 py-2 mb-3
-          bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
+          rounded-md bg-gray-100/10 px-3 py-2 mb-3
           focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={monthlyAddition}
           onChange={(e) =>
@@ -201,8 +199,7 @@ export default function InputForm({ setInputData }: inputProps) {
           type="text"
           inputMode="numeric"
           className="
-          border border-gray-700 rounded-md px-3 py-2 
-          bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
+          rounded-md bg-gray-100/10 px-3 py-2 
           focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
           value={durationYears}
           onChange={(e) => setDurationYears(onlyAllowInt(e.target.value))}

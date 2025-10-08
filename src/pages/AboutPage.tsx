@@ -3,7 +3,7 @@ export default function AboutPage() {
     <div className="flex justify-center mb-10">
       <div
         className="
-        bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-12 rounded-xl
+        bg-gray-900/80 backdrop-blur-md border-0 p-12 rounded-xl
         w-full max-w-7xl text-white space-y-10
         transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
       >

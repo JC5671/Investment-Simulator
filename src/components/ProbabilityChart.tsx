@@ -244,7 +244,7 @@ export default function ProbabilityChart({ finalDist, finalYear }: ChartProps) {
   return (
     <Card
       className="
-      bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-6 rounded-xl
+      bg-gray-900/80 backdrop-blur-md border-0 p-6 rounded-xl
 		  w-full max-w-4xl text-white
       transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >
@@ -300,8 +300,7 @@ export default function ProbabilityChart({ finalDist, finalYear }: ChartProps) {
                   setInferenceProbability("");
               }}
               className="
-              border border-gray-700 rounded-md px-1 py-0
-              bg-gray-900/50 backdrop-blur-3xl text-sm
+              bg-gray-100/30 rounded-md px-1 py-0.5 mx-1 text-sm
               focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
             >
               <option value=">=">{"≥"}</option>
@@ -316,8 +315,7 @@ export default function ProbabilityChart({ finalDist, finalYear }: ChartProps) {
               type="text"
               inputMode="decimal"
               className="
-              w-30 border border-gray-700 rounded-md px-1 py-0
-              bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
+              w-30 rounded-md px-1 py-0 bg-gray-100/30
               focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
               value={inferenceValue}
               onChange={(e) => {
@@ -343,8 +341,7 @@ export default function ProbabilityChart({ finalDist, finalYear }: ChartProps) {
               type="text"
               inputMode="decimal"
               className="
-              w-16 border border-gray-700 rounded-md px-1 py-0
-              bg-gray-900/50 backdrop-blur-3xl placeholder-gray-400
+              w-16 rounded-md px-1 py-0 bg-gray-100/30
               focus:outline-none focus:ring-0 focus:shadow-[0_0_30px_rgba(100,180,255)]"
               value={inferenceProbability}
               onChange={(e) => {
