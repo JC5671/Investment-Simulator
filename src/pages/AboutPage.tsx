@@ -32,7 +32,7 @@ export default function AboutPage() {
             theoretical assumptions. Thus, this project was born.
           </p>
 
-          <p className="">
+          <p className="mb-3">
             This project is an{" "}
             <span className="text-[rgb(100,180,255)]">
               Interactive Investment Simulator
@@ -54,7 +54,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-semibold text-[rgb(100,180,255)] mb-3">
             Key Features
           </h2>
-          <ul className="list-disc list-inside  space-y-2">
+          <ul className="list-disc pl-5 space-y-2">
             <li>
               <span className="text-[rgb(100,180,255)]">
                 Single Page Application (SPA)
@@ -93,7 +93,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-semibold text-[rgb(100,180,255)] mb-3">
             Technical Achievements
           </h2>
-          <ul className="list-disc list-inside  space-y-2">
+          <ul className="list-disc pl-5 space-y-2">
             <li>
               <span className="text-[rgb(100,180,255)] font-bold">
                 Web Development:
@@ -156,7 +156,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-semibold text-[rgb(100,180,255)] mb-3">
             Reflection & Learnings
           </h2>
-          <p className=" mb-2">
+          <p className=" mb-3">
             This project deepened my understanding of both{" "}
             <span className="text-[rgb(100,180,255)]">
               quantitative finance
@@ -171,7 +171,7 @@ export default function AboutPage() {
             <span className="text-[rgb(100,180,255)]">React</span>, managing
             both computation and rendering performance.
           </p>
-          <p className="">
+          <p>
             On a personal note, this project reaffirmed that finance and
             technology share a common language,{" "}
             <span className="text-[rgb(100,180,255)]">data</span>. Simulating
@@ -185,7 +185,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-semibold text-[rgb(100,180,255)] mb-3">
             Future Improvements
           </h2>
-          <ul className="list-disc list-inside  space-y-2">
+          <ul className="list-disc pl-5 space-y-2">
             <li>
               Offload simulations to{" "}
               <span className="text-[rgb(100,180,255)]">Web Workers</span> for
