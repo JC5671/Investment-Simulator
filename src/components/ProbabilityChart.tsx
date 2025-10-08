@@ -98,7 +98,7 @@ export default function ProbabilityChart({ finalDist, finalYear }: ChartProps) {
     } else {
       msg += "greater than";
     }
-    msg += ` ${inferenceValue}"`;
+    msg += ` $${inferenceValue}"`;
 
     setInterpretation(msg);
   }, [inferenceValue, inferenceProbability]);
