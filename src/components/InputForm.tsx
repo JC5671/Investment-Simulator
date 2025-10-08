@@ -109,7 +109,7 @@ export default function InputForm({ setInputData }: inputProps) {
     <div
       className="
       bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-6 rounded-xl 
-      space-y-6  w-full max-w-sm text-white
+      space-y-6 w-full max-w-sm text-white
       transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
     >
       {/* Input Header */}

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { NavBar } from "./components/NavBar";
+import NavBar from "./components/NavBar.tsx";
 import SimulatorPage from "./pages/SimulatorPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 

@@ -1,32 +1,40 @@
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink,
-} from "./ui/navigation-menu";
+import { Link, useLocation } from "react-router-dom";
 
-export function NavBar() {
+export default function NavBar() {
+  const location = useLocation();
+
   return (
-    <NavigationMenu>
-      <NavigationMenuList className="flex gap-2">
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            className="block px-3 py-2 rounded-md hover:bg-accent"
-            href="/"
-          >
-            Simulator
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+    <div className="flex justify-center">
+      <div
+        className="
+      flex bg-gray-900/30 backdrop-blur-2xl border border-white/20 rounded-full
+      space-x-1 text-white mt-5 p-1 
+      transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
+      >
+        {/* Simulator Button */}
+        <Link
+          to="/"
+          className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-500 ${
+            location.pathname === "/"
+              ? "bg-[rgb(100,180,255)] shadow-sm"
+              : "text-white/80 hover:bg-white/10"
+          }`}
+        >
+          Investment Simulator
+        </Link>
 
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            className="block px-3 py-2 rounded-md hover:bg-accent"
-            href="/about"
-          >
-            About
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+        {/* About Button */}
+        <Link
+          to="/about"
+          className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-500 ${
+            location.pathname === "/about"
+              ? "bg-[rgb(100,180,255)] shadow-sm"
+              : "text-white/80 hover:bg-white/10"
+          }`}
+        >
+          About
+        </Link>
+      </div>
+    </div>
   );
 }
