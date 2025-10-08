@@ -3,9 +3,9 @@ export default function AboutPage() {
     <div className="flex justify-center mb-10">
       <div
         className="
-      bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-12 rounded-xl
-		  w-full max-w-7xl text-white space-y-10
-      transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
+        bg-gray-900/30 backdrop-blur-2xl border border-white/20 p-12 rounded-xl
+        w-full max-w-7xl text-white space-y-10
+        transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(100,180,255)]"
       >
         {/* Title */}
         <h1 className="text-4xl font-bold text-center text-[rgb(100,180,255)] mb-8">
@@ -81,7 +81,7 @@ export default function AboutPage() {
             </li>
             <li>
               <span className="text-[rgb(100,180,255)]">
-                Risk probability analysis
+                Probability risk analysis
               </span>{" "}
               and interpretation
             </li>
@@ -144,7 +144,7 @@ export default function AboutPage() {
               </span>
               , and{" "}
               <span className="text-[rgb(100,180,255)]">
-                risk probability analysis
+                Probability risk analysis
               </span>{" "}
               with clear interpretations.
             </li>
